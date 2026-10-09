@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Customer 360 Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF2F0;--card:#fff;--ink:#14231D;--mut:#6B7B74;--line:#E3E9E6;--side:#0B3D2E;--g1:#0B3D2E;--g2:#1F7A55;--g3:#52AE7E;--g4:#9ED3B4;--warn:#E0B24A;--bad:#C0392B;--icfg:#fff;--tile:#F6F9F7;--shadow:0 1px 2px rgba(11,61,46,.06);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1512;--card:#14211C;--ink:#E5EEEA;--mut:#8DA19A;--line:#243630;--side:#06231A;--g1:#6FD3A0;--icfg:#06231A;--tile:#1A2A24;--bad:#E8695A}}
+:root[data-theme="dark"]{--bg:#0C1512;--card:#14211C;--ink:#E5EEEA;--mut:#8DA19A;--line:#243630;--side:#06231A;--g1:#6FD3A0;--icfg:#06231A;--tile:#1A2A24;--bad:#E8695A}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 13px/1.45 'Plus Jakarta Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.app{display:grid;grid-template-columns:68px 1fr;min-height:100vh}
+nav{background:var(--side);display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 0;position:sticky;top:0;height:100vh}
+nav button{width:42px;height:42px;border:0;border-radius:10px;background:none;color:#9FC9B6;cursor:pointer;display:grid;place-items:center}
+nav button.on{background:#CFEBDD;color:#0B3D2E}nav button:hover:not(.on){background:rgba(255,255,255,.1)}
+nav button:focus-visible,select:focus-visible,.chip:focus-visible{outline:3px solid var(--g3);outline-offset:2px}
+nav svg,.ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+main{padding:22px 24px 0;min-width:0;display:flex;flex-direction:column;min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+h1{font-size:clamp(22px,3.4vw,32px);font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.1}
+.sub{color:var(--mut);margin:4px 0 0}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+select{appearance:none;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B7B74' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 32px 9px 12px;font:600 12px 'Plus Jakarta Sans',sans-serif;box-shadow:var(--shadow);cursor:pointer}
+.chip{border:1px solid var(--g2);background:var(--card);color:var(--g2);border-radius:20px;padding:6px 12px;font:600 12px inherit;font-family:inherit;cursor:pointer}
+.grid{display:grid;gap:14px;margin-top:16px;grid-template-columns:repeat(12,1fr)}
+.card{background:var(--card);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);border:1px solid var(--line);min-width:0}
+.card h3{margin:0 0 12px;font-size:12px;font-weight:800;letter-spacing:.02em;text-transform:uppercase}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}.s7{grid-column:span 7}.s8{grid-column:span 8}.s12{grid-column:span 12}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);min-width:0}
+.ic{flex:none;width:42px;height:42px;border-radius:50%;background:var(--g1);color:var(--icfg,#fff);display:grid;place-items:center}
+.tile b{display:block;font-size:20px;font-weight:800;line-height:1.1}.tile span{font-size:10.5px;color:var(--mut);font-weight:600}
+.tile.bad .ic{background:var(--bad);color:#fff}
+.stack{display:flex;flex-direction:column;gap:14px}.stack .card{flex:1}
+.leg{display:flex;flex-direction:column;gap:7px;font-size:12px}.leg div{display:flex;align-items:center;gap:8px;cursor:pointer}.leg i{width:10px;height:10px;border-radius:2px;flex:none}.leg span{color:var(--mut);margin-left:auto;white-space:nowrap}.leg b{font-weight:700}
+.donut{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.donut svg{width:150px;flex:none}
+.row{display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;margin:9px 0;font-size:12.5px}
+.row .ic{width:30px;height:30px}.row .ic svg{width:15px;height:15px}
+.pb{height:6px;background:var(--line);border-radius:4px;overflow:hidden}.pb i{display:block;height:100%;border-radius:4px;background:var(--g2)}
+.row em{font-style:normal;font-weight:800;text-align:right}.row p{margin:0 0 3px;display:flex;justify-content:space-between}
+.wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{font-size:11px;color:var(--mut);font-weight:700;text-align:right;padding:8px;border-bottom:2px solid var(--ink);white-space:nowrap}
+td{padding:8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}th:first-child,td:first-child{text-align:left}
+tr.r{cursor:pointer}tr.r:hover td,tr.on td{background:var(--tile)}.dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px}
+.heat{display:grid;gap:2px;font-size:10.5px;min-width:560px}.heat div{height:21px;display:flex;align-items:center;justify-content:center;border-radius:3px}.heat .h{color:var(--mut);font-weight:700;height:auto}.heat .l{justify-content:flex-start;color:var(--mut);font-weight:600}
+svg text{fill:var(--mut);font:600 10.5px 'Plus Jakarta Sans',sans-serif}svg .v{fill:var(--ink);font-weight:700}
+.bars rect{cursor:pointer;transition:opacity .15s}.bars.f rect:not(.on){opacity:.3}
+footer{margin:18px -24px 0;background:var(--side);color:#D9EFE4;padding:12px 24px calc(12px + env(safe-area-inset-bottom,0px));font-size:12px;position:sticky;bottom:0;margin-top:auto}
+footer b{color:#9ED3B4}main>.grid{margin-bottom:18px}
+.view{display:none}.view.on{display:contents}
+#tip{position:fixed;pointer-events:none;background:#0B3D2E;color:#fff;font-size:11.5px;padding:6px 9px;border-radius:6px;display:none;z-index:9;max-width:220px}
+@media(max-width:900px){.app{grid-template-columns:1fr}nav{flex-direction:row;height:auto;position:sticky;top:0;z-index:5;justify-content:center;padding:8px}main{padding:16px 14px 0}footer{margin:18px -14px 0;padding-left:14px;padding-right:14px}.tiles{grid-template-columns:repeat(2,1fr)}.card{grid-column:span 12!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<div class="app"><nav aria-label="Report pages" id="nav"></nav>
+<main>
+<header><div><h1 id="title">Customer 360 Report</h1><p class="sub" id="sub"></p></div>
+<div class="filters"><button class="chip" id="clr" hidden></button>
+<select id="fr" aria-label="Region"></select><select id="fc" aria-label="Acquisition channel"></select></div></header>
+<div class="grid" id="v-ov">
+<div class="card s5"><h3>Average CLV by segment</h3><div id="clvseg"></div></div>
+<div class="s7 stack"><div class="tiles" id="tiles"></div>
+<div style="display:grid;grid-template-columns:1.25fr 1fr;gap:14px;flex:1"><div class="card"><h3>Revenue by month</h3><div id="trend"></div></div><div class="card"><h3>Churn by order count</h3><div id="chord"></div></div></div></div>
+<div class="card s4"><h3>Customers by segment</h3><div id="segdn"></div></div>
+<div class="card s4"><h3>Revenue by category</h3><div id="catdn"></div></div>
+<div class="card s4"><h3>Active vs churned by region</h3><div id="regbars"></div></div></div>
+
+<div class="grid" id="v-rfm" hidden>
+<div class="card s12"><h3>RFM segments (select a row to cross-filter every page)</h3><div class="wrap"><table id="segtbl"></table></div></div>
+<div class="card s7"><h3>Customers by recency score and frequency score</h3><div class="wrap"><div class="heat" id="rfheat"></div></div></div>
+<div class="card s5"><h3>How segments are scored</h3><p style="color:var(--mut);margin:0 0 8px">Recency: 5 = ordered within 30 days, 4 = 60, 3 = 90, 2 = 180, 1 = older. Frequency: 5 = 8+ orders, 4 = 5 to 7, 3 = 3 to 4, 2 = 2, 1 = 1. Monetary: quintile of lifetime revenue.</p><div class="leg" id="rfmleg"></div></div></div>
+
+<div class="grid" id="v-ch" hidden>
+<div class="card s12"><h3>Cohort retention: share of each first-order cohort that ordered again</h3><div class="wrap"><div class="heat" id="cohort"></div></div></div>
+<div class="card s4"><h3>Churn by channel</h3><div id="chchan"></div></div>
+<div class="card s4"><h3>Churn by region</h3><div id="chreg"></div></div>
+<div class="card s4"><h3>Churn by category</h3><div id="chcat"></div></div>
+<div class="card s12"><h3>Slipping soon: active, high value, no order for 60+ days</h3><div class="wrap"><table id="slip"></table></div></div></div>
+
+<div class="grid" id="v-clv" hidden>
+<div class="card s6"><h3>Customers by CLV band</h3><div id="clvhist"></div></div>
+<div class="card s6"><h3>Historical vs predicted CLV by segment</h3><div id="clvsplit"></div></div>
+<div class="card s12"><h3>Top customers by lifetime value</h3><div class="wrap"><table id="top"></table></div></div></div>
+<footer id="foot"></footer></main></div><div id="tip"></div>
+<script>
+const R=__DATA__;
+const X=(o)=>o.rows.map(r=>Object.fromEntries(o.cols.map((c,i)=>[c,r[i]])));
+const C=X(R.cust),M=X(R.monthly_cut),G=X(R.category_cut);
+const SEG=['Champions','Loyal','Potential Loyalists','New Customers','Needs Attention','At Risk','Cannot Lose','Hibernating'];
+const SC={'Champions':'#0B3D2E','Loyal':'#1F7A55','Potential Loyalists':'#52AE7E','New Customers':'#9ED3B4','Needs Attention':'#E0B24A','At Risk':'#E07B39','Cannot Lose':'#C0392B','Hibernating':'#9AA5A0'};
+const G5=['#0B3D2E','#1F7A55','#52AE7E','#9ED3B4','#CBE8D8','#E0B24A'];
+const $=i=>document.getElementById(i);
+const inr=v=>v>=1e7?'₹'+(v/1e7).toFixed(2)+' Cr':v>=1e5?'₹'+(v/1e5).toFixed(1)+' L':v>=1e3?'₹'+(v/1e3).toFixed(1)+'K':'₹'+Math.round(v);
+const n=v=>Math.round(v).toLocaleString('en-IN');
+const sum=(a,f)=>a.reduce((s,x)=>s+f(x),0),avg=(a,f)=>a.length?sum(a,f)/a.length:0;
+const grp=(a,f)=>{const m={};a.forEach(x=>(m[f(x)]=m[f(x)]||[]).push(x));return m};
+const P={home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3-6 6.500-6s6 2 6.500 6M16 4.500a3.500 3.500 0 010 7M18 14c2 .6 3.200 2.600 3.500 6"/>',pie:'<path d="M12 3v9h9a9 9 0 11-9-9z"/><path d="M15 3.500A9 9 0 0120.500 9H15z"/>',trend:'<path d="M3 17l6-6 4 4 8-9M15 6h6v6"/>',wallet:'<path d="M3 7h16a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2zM3 7l12-3v3M16 14h2"/>',alert:'<path d="M12 3l10 18H2zM12 10v5M12 18v.5"/>',bag:'<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 016 0v2"/>',check:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',star:'<path d="M12 3l2.800 5.800 6.200.8-4.500 4.300 1.100 6.100L12 17.200 6.400 20l1.100-6.100L3 9.600l6.200-.8z"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/>'};
+const ico=p=>`<svg viewBox="0 0 24 24">${P[p]}</svg>`;
+const VIEWS=[['ov','home','Overview'],['rfm','users','RFM segments'],['ch','trend','Churn and retention'],['clv','wallet','Lifetime value']];
+const S={view:'ov',region:'All',channel:'All',seg:null};
+$('nav').innerHTML=VIEWS.map(v=>`<button data-v="${v[0]}" title="${v[2]}" aria-label="${v[2]}">${ico(v[1])}</button>`).join('');
+$('nav').onclick=e=>{const b=e.target.closest('button');if(b){S.view=b.dataset.v;render()}};
+const opts=(a,all)=>[all,...[...new Set(a)].sort()].map(x=>`<option>${x}</option>`).join('');
+$('fr').innerHTML=opts(C.map(c=>c.region),'All regions');$('fc').innerHTML=opts(C.map(c=>c.channel),'All channels');
+$('fr').onchange=e=>{S.region=e.target.selectedIndex?e.target.value:'All';render()};
+$('fc').onchange=e=>{S.channel=e.target.selectedIndex?e.target.value:'All';render()};
+$('clr').onclick=()=>{S.seg=null;render()};
+function seg(s){S.seg=S.seg===s?null:s;render()}window.seg=seg;
+const okRC=x=>(S.region==='All'||x.region===S.region)&&(S.channel==='All'||x.channel===S.channel);
+const ok=x=>okRC(x)&&(!S.seg||x.segment===S.seg);
+/* ---------- chart helpers ---------- */
+function vbar(el,items,{fmt=inr,h=250,click=null,w=520}={}){
+ const mx=Math.max(...items.map(i=>i.v),1),pl=44,pb=40,bw=(w-pl)/items.length,ph=h-pb-20;
+ let s=`<svg viewBox="0 0 ${w} ${h}" width="100%" class="bars ${S.seg&&click?'f':''}">`;
+ [0,.25,.5,.75,1].forEach(f=>{const y=20+ph*(1-f);s+=`<line x1="${pl}" x2="${w}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pl-6}" y="${y+3}" text-anchor="end">${fmt(mx*f)}</text>`});
+ items.forEach((it,i)=>{const bh=it.v/mx*ph,x=pl+i*bw+bw*.17,y=20+ph-bh,words=it.l.split(' ');
+  s+=`<rect class="${S.seg===it.l?'on':''}" x="${x}" y="${y}" width="${bw*.66}" height="${bh}" rx="2" fill="${it.c}" data-tip="${it.t||it.l}: ${fmt(it.v)}" ${click?`onclick="${click}('${it.l}')"`:''}/><text class="v" x="${x+bw*.33}" y="${y-5}" text-anchor="middle">${fmt(it.v)}</text>`;
+  words.slice(0,2).forEach((t,j)=>s+=`<text x="${x+bw*.33}" y="${h-pb+14+j*11}" text-anchor="middle">${t}</text>`)});
+ el.innerHTML=s+'</svg>'}
+function donut(el,items,fmt=n){const t=sum(items,i=>i.v)||1,r=52,C2=2*Math.PI*r;let o=0;
+ let s=`<svg viewBox="0 0 150 150"><g transform="rotate(-90 75 75)">`;
+ items.forEach(i=>{const l=i.v/t*C2;s+=`<circle cx="75" cy="75" r="${r}" fill="none" stroke="${i.c}" stroke-width="26" stroke-dasharray="${l} ${C2-l}" stroke-dashoffset="${-o}" data-tip="${i.l}: ${fmt(i.v)} (${(i.v/t*100).toFixed(1)}%)" ${i.k?`onclick="seg('${i.k}')" style="cursor:pointer"`:''}/>`;o+=l});
+ s+=`</g><text x="75" y="72" text-anchor="middle" class="v" style="font-size:15px">${fmt(t)}</text><text x="75" y="86" text-anchor="middle">total</text></svg>`;
+ el.innerHTML=`<div class="donut">${s}<div class="leg">${items.map(i=>`<div ${i.k?`onclick="seg('${i.k}')"`:''}><i style="background:${i.c}"></i><b>${i.l}</b><span>${fmt(i.v)} (${(i.v/t*100).toFixed(0)}%)</span></div>`).join('')}</div></div>`}
+function prog(el,items,fmt=v=>v+'%',mx=null,icon='user'){mx=mx||Math.max(...items.map(i=>i.v),1);
+ el.innerHTML=items.map(i=>`<div class="row"><div class="ic">${ico(i.i||icon)}</div><div><p><span>${i.l}</span></p><div class="pb"><i style="width:${i.v/mx*100}%;background:${i.c||'var(--g2)'}"></i></div></div><em>${fmt(i.v)}</em></div>`).join('')}
+function heat(el,cols,rows,cell,head='',cw='62px 44px'){el.style.gridTemplateColumns=`${cw} repeat(${cols.length},1fr)`;
+ el.innerHTML=`<div class="h l">${head}</div><div class="h">Size</div>`+cols.map(c=>`<div class="h">${c}</div>`).join('')+rows.map(r=>`<div class="l">${r.l}</div><div class="l">${r.s}</div>`+cols.map((c,j)=>cell(r,j)).join('')).join('')}
+const mix=(p)=>`color-mix(in srgb,#1F7A55 ${Math.round(Math.min(100,p))}%,var(--tile))`;
+/* ---------- render ---------- */
+function render(){
+ $('nav').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
+ VIEWS.forEach(v=>$('v-'+v[0]).hidden=v[0]!==S.view);
+ $('title').textContent={ov:'Customer 360 Report',rfm:'RFM Segmentation',ch:'Churn and Retention',clv:'Customer Lifetime Value'}[S.view];
+ const d=C.filter(ok),dRC=C.filter(okRC),m=M.filter(ok),g=G.filter(ok);
+ $('sub').textContent=`${n(d.length)} customers${S.seg?' in '+S.seg:''} · ${S.region==='All'?'all regions':S.region} · ${S.channel==='All'?'all channels':S.channel} · data as of 30 Sep 2026`;
+ $('clr').hidden=!S.seg;$('clr').textContent='Segment: '+S.seg+'  ✕';
+ const act=d.filter(x=>!x.churned),ch=d.length-act.length;
+ if(S.view==='ov'){
+  $('tiles').innerHTML=[['users',n(d.length),'total customers'],['check',n(act.length),'active customers'],['alert',(ch/(d.length||1)*100).toFixed(1)+'%','90-day churn','bad'],['star',inr(avg(d,x=>x.clv)),'average CLV'],['bag',inr(sum(d,x=>x.revenue)),'total revenue']]
+  .map(t=>`<div class="tile ${t[3]||''}"><div class="ic">${ico(t[0])}</div><div><b>${t[1]}</b><span>${t[2]}</span></div></div>`).join('');
+  const bs=grp(dRC,x=>x.segment);
+  vbar($('clvseg'),SEG.filter(s=>bs[s]).map(s=>({l:s,v:avg(bs[s],x=>x.clv),c:SC[s]})),{click:'seg',h:330});
+  const mm=grp(m,x=>x.month),ks=Object.keys(mm).sort();
+  vbar($('trend'),ks.map((k,i)=>({t:k,l:i%3===0?k.slice(2):' ',v:sum(mm[k],x=>x.revenue),c:'#1F7A55'})),{h:215,w:420});
+  const bo=grp(d,x=>x.f);
+  prog($('chord'),[1,2,3,4,5].filter(f=>bo[f]).map(f=>({l:['1 order','2 orders','3-4 orders','5-7 orders','8+ orders'][f-1],v:avg(bo[f],x=>x.churned)*100,c:['#C0392B','#E07B39','#E0B24A','#52AE7E','#1F7A55'][f-1],i:'user'})),v=>v.toFixed(0)+'%',100);
+  donut($('segdn'),SEG.filter(s=>bs[s]).map(s=>({l:s,v:bs[s].length,c:SC[s],k:s})));
+  const bc=grp(g,x=>x.category);
+  donut($('catdn'),Object.keys(bc).map((k,i)=>({l:k,v:sum(bc[k],x=>x.revenue),c:G5[i%6]})).sort((a,b)=>b.v-a.v),inr);
+  const br=grp(d,x=>x.region),rs=Object.keys(br).sort();
+  {const w=470,h=250,pl=36,mx=Math.max(...rs.map(r=>br[r].length)),bw=(w-pl)/rs.length;let s=`<svg viewBox="0 0 ${w} ${h}" width="100%">`;
+   rs.forEach((r,i)=>{const a=br[r].filter(x=>!x.churned).length,c=br[r].length-a,x=pl+i*bw+bw*.1;
+    [[a,'#1F7A55',0],[c,'#C0392B',1]].forEach(([v,col,j])=>{const bh=v/mx*180;s+=`<rect x="${x+j*bw*.38}" y="${210-bh}" width="${bw*.36}" height="${bh}" rx="2" fill="${col}" data-tip="${r} ${j?'churned':'active'}: ${n(v)}"/><text class="v" x="${x+j*bw*.38+bw*.18}" y="${205-bh}" text-anchor="middle">${n(v)}</text>`});
+    s+=`<text x="${x+bw*.37}" y="228" text-anchor="middle">${r}</text>`});
+   $('regbars').innerHTML=s+`<text x="${pl}" y="246"><tspan fill="#1F7A55">■</tspan> Active   <tspan fill="#C0392B">■</tspan> Churned</text></svg>`}
+ }
+ if(S.view==='rfm'){
+  const bs=grp(dRC,x=>x.segment);
+  $('segtbl').innerHTML='<tr><th>Segment</th><th>Customers</th><th>Avg days since order</th><th>Avg orders</th><th>Revenue</th><th>Avg CLV</th><th>Total CLV</th><th>Churned</th></tr>'+
+  SEG.filter(s=>bs[s]).map(s=>{const a=bs[s];return `<tr class="r ${S.seg===s?'on':''}" onclick="seg('${s}')"><td><span class="dot" style="background:${SC[s]}"></span>${s}</td><td>${n(a.length)}</td><td>${n(avg(a,x=>x.recency))}</td><td>${avg(a,x=>x.orders).toFixed(1)}</td><td>${inr(sum(a,x=>x.revenue))}</td><td>${inr(avg(a,x=>x.clv))}</td><td>${inr(sum(a,x=>x.clv))}</td><td>${(avg(a,x=>x.churned)*100).toFixed(0)}%</td></tr>`}).join('');
+  const cnt={};d.forEach(x=>{const k=x.r+'-'+x.f;cnt[k]=(cnt[k]||0)+1});const mx=Math.max(...Object.values(cnt),1);
+  heat($('rfheat'),[1,2,3,4,5].map(f=>'F'+f),[5,4,3,2,1].map(r=>({l:'R'+r,s:'',r})),(row,j)=>{const v=cnt[row.r.r+'-'+(j+1)]||0;return `<div style="background:${mix(v/mx*100)};color:${v/mx>.5?'#fff':'var(--ink)'}" data-tip="R${row.r.r}, F${j+1}: ${n(v)} customers">${v||''}</div>`},'','40px 0px');
+  $('rfmleg').innerHTML=SEG.map(s=>`<div onclick="seg('${s}')"><i style="background:${SC[s]}"></i><b>${s}</b></div>`).join('');
+ }
+ if(S.view==='ch'){
+  const ks=[...new Set(C.map(x=>x.cohort))].sort(),lastM=ks.length-1,by=grp(d,x=>x.cohort);
+  const rows=ks.filter(k=>by[k]).map(k=>({l:k,s:by[k].length,a:by[k],i:ks.indexOf(k)}));
+  heat($('cohort'),[...Array(13).keys()].map(i=>'M'+i),rows,(r,j)=>{if(r.i+j>lastM)return'<div></div>';const v=r.a.filter(x=>x.mask>>j&1).length/r.s*100;return `<div style="background:${mix(v)};color:${v>45?'#fff':'var(--ink)'}" data-tip="${r.l}, month ${j}: ${v.toFixed(1)}% of ${r.s}">${Math.round(v)}</div>`},'Cohort');
+  const cb=(f)=>{const b=grp(d,f);return Object.keys(b).map(k=>({l:k,v:avg(b[k],x=>x.churned)*100})).sort((a,b)=>b.v-a.v).map((o,i,a)=>({...o,c:i===0?'#C0392B':i===a.length-1?'#1F7A55':'#52AE7E',i:'user'}))};
+  prog($('chchan'),cb(x=>x.channel),v=>v.toFixed(0)+'%',100);prog($('chreg'),cb(x=>x.region),v=>v.toFixed(0)+'%',100);prog($('chcat'),cb(x=>x.category),v=>v.toFixed(0)+'%',100);
+  const sl=d.filter(x=>!x.churned&&x.recency>60).sort((a,b)=>b.clv-a.clv).slice(0,10);
+  $('slip').innerHTML='<tr><th>Customer</th><th>Region</th><th>Channel</th><th>Segment</th><th>Days since order</th><th>Orders</th><th>CLV</th></tr>'+(sl.map(c=>`<tr><td>${c.full_name} #${c.customer_id}</td><td>${c.region}</td><td>${c.channel}</td><td><span class="dot" style="background:${SC[c.segment]}"></span>${c.segment}</td><td>${c.recency}</td><td>${c.orders}</td><td><b>${inr(c.clv)}</b></td></tr>`).join('')||'<tr><td colspan="7">No active customers are slipping in this view.</td></tr>');
+ }
+ if(S.view==='clv'){
+  const B=[[0,10e3,'<10K'],[10e3,25e3,'10-25K'],[25e3,50e3,'25-50K'],[50e3,1e5,'50K-1L'],[1e5,2e5,'1-2L'],[2e5,1e9,'2L+']];
+  vbar($('clvhist'),B.map((b,i)=>({l:b[2],v:d.filter(x=>x.clv>=b[0]&&x.clv<b[1]).length,c:G5[Math.min(i,4)]})),{fmt:n,h:260});
+  const bs=grp(d,x=>x.segment),ss=SEG.filter(s=>bs[s]);
+  {const w=520,h=260,pl=60,mx=Math.max(...ss.map(s=>avg(bs[s],x=>x.clv)),1),bw=(w-pl)/ss.length;let s=`<svg viewBox="0 0 ${w} ${h}" width="100%">`;
+   [0,.5,1].forEach(f=>{const y=20+190*(1-f);s+=`<line x1="${pl}" x2="${w}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pl-6}" y="${y+3}" text-anchor="end">${inr(mx*f)}</text>`});
+   ss.forEach((k,i)=>{const hi=avg(bs[k],x=>x.clv-x.predicted),pr=avg(bs[k],x=>x.predicted),x=pl+i*bw+bw*.17,h1=hi/mx*190,h2=pr/mx*190;
+    s+=`<rect x="${x}" y="${210-h1}" width="${bw*.66}" height="${h1}" fill="#1F7A55" data-tip="${k} historical: ${inr(hi)}"/><rect x="${x}" y="${210-h1-h2}" width="${bw*.66}" height="${h2}" fill="#9ED3B4" data-tip="${k} predicted: ${inr(pr)}"/>`;
+    k.split(' ').slice(0,2).forEach((t,j)=>s+=`<text x="${x+bw*.33}" y="${226+j*11}" text-anchor="middle">${t}</text>`)});
+   $('clvsplit').innerHTML=s+`<text x="${pl}" y="${h-2}"><tspan fill="#1F7A55">■</tspan> Margin earned   <tspan fill="#9ED3B4">■</tspan> Predicted future margin</text></svg>`}
+  $('top').innerHTML='<tr><th>Customer</th><th>Region</th><th>Segment</th><th>Favourite category</th><th>Orders</th><th>Revenue</th><th>Predicted</th><th>CLV</th></tr>'+d.slice().sort((a,b)=>b.clv-a.clv).slice(0,10).map(c=>`<tr><td>${c.full_name} #${c.customer_id}</td><td>${c.region}</td><td><span class="dot" style="background:${SC[c.segment]}"></span>${c.segment}</td><td>${c.category}</td><td>${c.orders}</td><td>${inr(c.revenue)}</td><td>${inr(c.predicted)}</td><td><b>${inr(c.clv)}</b></td></tr>`).join('');
+ }
+ insights(d,dRC);
+}
+function insights(d,a){
+ if(!d.length){$('foot').innerHTML='<b>No customers match these filters.</b>';return}
+ const rev=sum(d,x=>x.revenue)||1,cs=d.filter(x=>x.segment==='Champions'),risk=d.filter(x=>x.segment==='At Risk'||x.segment==='Cannot Lose');
+ const one=d.filter(x=>x.f===1),many=d.filter(x=>x.f===5);
+ $('foot').innerHTML=`<b>Insights:</b> Champions are ${(cs.length/d.length*100).toFixed(0)}% of customers but ${(sum(cs,x=>x.revenue)/rev*100).toFixed(0)}% of revenue. `+
+ (one.length&&many.length?`${(avg(one,x=>x.churned)*100).toFixed(0)}% of one-order customers have churned versus ${(avg(many,x=>x.churned)*100).toFixed(0)}% of customers with 8+ orders. `:'')+
+ `${n(risk.length)} At Risk and Cannot Lose customers hold ${inr(sum(risk,x=>x.revenue))} of past revenue, the first win-back target.`}
+/* tooltip */
+const tip=$('tip');document.addEventListener('mousemove',e=>{const t=e.target.closest('[data-tip]');if(t){tip.textContent=t.dataset.tip;tip.style.display='block';tip.style.left=Math.min(e.clientX+12,innerWidth-230)+'px';tip.style.top=e.clientY+14+'px'}else tip.style.display='none'});
+render();
+</script></body></html>
